@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tex-dev
+  name: tex-dev-backend-service
+spec:
+  ports:
+    - protocol: TCP
+      name: app
+      port: 9776
+  selector:
+    app: tex-dev-app
+    tier: backend

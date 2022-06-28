@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+namespace: tools-python
+images:
+- name: tools-python
+  newName: miguekos1233/tools-python
+  newTag: "1.0"

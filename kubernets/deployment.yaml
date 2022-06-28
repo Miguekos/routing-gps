@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: tex-dev
+  name: tex-routing
+  labels:
+    app: tex-routing-app
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tex-routing-app
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tex-routing-app
+        tier: backend
+    spec:
+      containers:
+        - image: miguekos1233/routing-gps:3.0
+          name: tex-routing-routing
+          resources:
+            requests:
+              cpu: "200m"
+              memory: 128Mi
+            limits:
+              cpu: "300m"
+              memory: 256Mi
+          env:
+            - name: TZ
+              value: "America/Lima"
+            - name: GOOGLE_API_KEY
+              value: "AIzaSyCg180vuqFBX0etX3PWYVWpRdyTz6QWuyE"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "5000"
+            - name: MONGO_URL
+              value: "mongodb://adminuser:password123@mongo-nodeport-svc.develop:27017"
+            - name: MONGO_DB
+              value: "tuenvioexpress_dev"
+            - name: MONGO_COLLECTION
+              value: "gpstrackings"
+            - name: REDIS_HOST_DB
+              value: "redis.default"
+            - name: REDIS_PORT_DB
+              value: "6379"
+          ports:
+            - containerPort: 5000
+              name: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: tex-dev
+  name: tex-routing-service
+spec:
+  ports:
+    - protocol: TCP
+      name: app
+      port: 5000
+  selector:
+    app: tex-routing-app
+    tier: backend
